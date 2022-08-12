@@ -1,0 +1,38 @@
+﻿@page "/"
+@using ShoppingStore.Api.Entities;
+@using ShoppingStore.Web.Services;
+@inject ICustomerService custService;
+<PageTitle>Index</PageTitle>
+
+<h1>List of Customers With Discount</h1>
+
+<table class="table table-sm table-bordered table-striped">
+  <tr>
+    <th scope="col">Id</th>
+    <th scope="col">Name</th>
+    <th scope="col">Address</th>
+  </tr>
+@foreach(var item in customers)
+{
+    <tr>
+    <td>@item.Id</td>
+    <td>@item.Name</td>
+    <td>@item.Address
+    </td>
+  </tr>
+}
+</table>
+
+@code{
+    private List<Customer> customers = new List<Customer>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCustomers();
+    }
+
+    private async Task GetCustomers()
+    {
+        customers = await custService.GetCustomer();
+    }
+}

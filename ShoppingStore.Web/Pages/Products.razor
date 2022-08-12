@@ -1,0 +1,56 @@
+﻿@page "/Products"
+@using ShoppingStore.Api.Entities;
+@using ShoppingStore.Web.Services;
+@inject IProductService prodService;
+@using System.Linq;
+<PageTitle>Index</PageTitle>
+
+<h1>List of Products With Discount</h1>
+
+@*<h1>@customers[0].Promotion[0].Name</h1>*@
+<table class="table table-sm table-bordered table-striped">
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Org. Price</th>
+        <th scope="col">Discount</th>
+        <th scope="col">Dis. Price</th>
+    </tr>
+    @foreach(var item in productList)
+    {
+        promotionList = item.Promotion.ToList();    
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Name</td>
+            <td>@item.Price</td>
+            @if(item.Promotion.Count > 0)
+            {
+                @foreach (var lst in promotionList)
+                {
+                    <td>@lst.Discount %</td>
+                    <td>@(item.Price-(item.Price*lst.Discount / 100))</td>
+                }
+            } 
+            else
+            {
+                <td>0 %</td>
+                <td>@item.Price</td>
+            }
+        </tr>
+    }
+</table>
+
+@code{
+    private List<Product> productList = new List<Product>();
+    private List<Promotion> promotionList = new List<Promotion>();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProducts();
+    }
+
+    private async Task GetProducts()
+    {
+        productList = await prodService.GetProduct();
+
+    }
+}
